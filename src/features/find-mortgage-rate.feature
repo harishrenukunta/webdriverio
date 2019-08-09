@@ -4,7 +4,8 @@ Feature: Find a mortgage rate
   So that I can decide whether to switch my mortgage to Nationwide
 
 
-  Scenario: Find mortgage rates
+  
+  Scenario: User should be able to apply fixed term mortgages
     Given I open the url "https://www.nationwide.co.uk"
     When navigate to new mortgage rates page
     And find mortgage rate by providing below information:
@@ -18,4 +19,6 @@ Feature: Find a mortgage rate
       | 5 yr Fixed  |
       | 10 yr Fixed |
     When opt for a 5 yr fixed mortgage
-    Then page with header 'Start your remortgage application' shows up
+    Then 'Start your Remortgage application' page shows up
+
+    

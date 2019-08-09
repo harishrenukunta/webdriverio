@@ -41,9 +41,11 @@ class MortgageRatesPage{
 
     haveNationWideMortgage(isMortgagePresent){
             if(isMortgagePresent === 'Yes'){
+                this._yesMortgageExist.waitForEnabled(10000);
                 this._yesMortgageExist.click();
             }else{
                 console.log('No mortgage click');
+                this._noMortgageExist.waitForEnabled(10000);
                 this._noMortgageExist.click();
             } 
           return this;
@@ -87,20 +89,24 @@ class MortgageRatesPage{
         return this;
     }
 
-    getFixedTermOptions(){
-        let fixedTermOptions = [];
-        const mortgageOptions = $$('#NewMortgageRateTables div.ratesTableBody');
-        const mortgageOptionsCount = mortgageOptions.length;
-        console.log(`Total mortgage options:${mortgageOptionsCount}`);
-        for(let i=0; i < mortgageOptionsCount; i++){
-            const period = mortgageOptions[i].$$('table tbody tr[data-product-code] > th.notOnMobile > h3');
-            fixedTermOptions.push(period[0].getText());
+    get _mortgageOptionsSelector(){
+        return '#NewMortgageRateTables div.ratesTableBody';
+    }
+
+    getMortgageOptionsText(){
+        let mortgageOptionsText = [];
+        const mortgageOptions = this.getMortgageOptions();
+        for(let mortgageOption of mortgageOptions){
+            mortgageOptionsText.push(this.getMortgageOptionText(mortgageOption));
         }
-        return fixedTermOptions;
+        return mortgageOptionsText;
      }
 
-     showMortgageType(mortType){
-         
+     getMortgageOptions(){
+         return $$(this._mortgageOptionsSelector);
+     }
+
+     showMortgageType(mortType){        
          switch(mortType){
              case "fixed":
                 this.selectCheckBox('input-fixed', true);
@@ -125,8 +131,35 @@ class MortgageRatesPage{
          return this;
      }
 
+     getMortgageOptionText(mortgageOption){
+        return mortgageOption.$$('table tbody tr[data-product-code] > th.notOnMobile > h3')[0].getText();  
+     }
+
+     getToMoreInfoAndApplyForMortgageOption(mortgageOption){
+        return mortgageOption.$$('table tbody tr[data-product-code] > th.showHideCell > a')[0];
+     }
+
+     getToApplyMortgageOption(mortgageOption){
+        return mortgageOption.$$('table tbody tr div.applyButton > a')[0];
+     }
+
      applyMortgage(mortgageTypeTerm){
-         
+        const mortgageOptions = this.getMortgageOptions(); 
+        let foundTerm=false;
+
+        for(let mortgageOption of mortgageOptions){
+            const mortgageOptionText = this.getMortgageOptionText(mortgageOption);
+            if(mortgageOptionText.toLowerCase() === mortgageTypeTerm){
+                foundTerm = true;
+                let elem = this.getToMoreInfoAndApplyForMortgageOption(mortgageOption);
+                elem.scroll(10,10);
+                elem.click();
+                browser.pause(2000);
+                this.getToApplyMortgageOption(mortgageOption).click();
+                break;
+            }
+        }
+        return foundTerm;
      }
 
      selectCheckBox(checkkBoxId, checkState){

@@ -1,5 +1,6 @@
 import {Given, When, Then} from 'cucumber';
-import home from '../support/pages/home.po'
+import home from '../support/pages/home.po';
+import startRemoteApplicatePage from '../support/pages/StartRemortgageApplicationPage.po';
 
 let mortgageRatesPage;
 Given(
@@ -41,7 +42,7 @@ When(/^find mortgage rate by providing below information:$/, function(mortgageIn
 Then(/^verify mortgage choices for below periods returned:$/, function(expectedFixedTermOptions){
     const expectedFixedTermOptionsMap = expectedFixedTermOptions.hashes();
     let expectedFixedTermOptionsAsArr = [];
-    const actualFixedTermOptions = mortgageRatesPage.getFixedTermOptions();
+    const actualFixedTermOptions = mortgageRatesPage.getMortgageOptionsText();
     for(let expectedFixedTermOption of expectedFixedTermOptionsMap){
         expect(actualFixedTermOptions).to.be.an('array').that.includes(expectedFixedTermOption.FixedTerm);
     }    
@@ -56,7 +57,14 @@ When(/^choose to display only (fixed|tracker) mortgage and with (fee|no fee)$/, 
     browser.pause(2000);
 });
 
-When(/^opt for a (\\d+ yr fixed|\\d+ yr tracker) mortgage$/, function(mortgageTypeToSelect){
-    mortgageRatesPage
-        .applyMortgage(mortgageTypeToSelect);
+When(/^opt for a (\d+ yr) (fixed|tracker) mortgage$/, function(mortgageTerm, mortgageType){
+    expect(mortgageRatesPage
+        .applyMortgage(mortgageTerm + ' ' + mortgageType)).to.be.true;
+    browser.pause(2000);
 });
+
+Then(/^'(.*)' page shows up$/, function(expectedPageHeader){
+    if(expectedPageHeader === 'Start your Remortgage application' ){
+        expect(startRemoteApplicatePage.getPageHeader()).to.be.equal(expectedPageHeader);
+    }
+})
