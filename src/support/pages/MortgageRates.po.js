@@ -1,8 +1,6 @@
+import constants from '../Resources/Constants';
 class MortgageRatesPage{
-    constructor(){
-       // this._noMortgageExist = $('#selectorItemHaveNationwideMortgage1');
-       // this._yesMortgageExist = $('#selectorItemHaveNationwideMortgage0');
-    }
+    constructor(){}
 
     get _yesMortgageExist(){
         return $('#selectorItemHaveNationwideMortgage0');
@@ -55,13 +53,13 @@ class MortgageRatesPage{
 
     mortgageType(mortgageType){
         switch(mortgageType){
-            case "Changing lender":
+            case constants.MORTGAGE_REASON_CHANGE_LENDER:
                 this._mortgageType_changeLender.click();
                 break;
-            case "Moving home":
+            case constants.MORTGAGE_REASON_MOVE_HOME:
                 this._mortgageType_movingHome.click();
                 break;
-            case "First home":
+            case constants.MORTGAGE_REASON_FIRST_BUY:
                 this._mortgageType_firstHome.click();
                 break;
         }
@@ -108,10 +106,10 @@ class MortgageRatesPage{
 
      showMortgageType(mortType){        
          switch(mortType){
-             case "fixed":
+             case constants.FIXED_MORTGAGE_TYPE:
                 this.selectCheckBox('input-fixed', true);
                  break;
-             case "tracker":
+             case constants.TRACKER_MORTGAGE_TYPE:
                  this.selectCheckBox('input-tracker', true);
                  break;
          }
@@ -151,21 +149,27 @@ class MortgageRatesPage{
             const mortgageOptionText = this.getMortgageOptionText(mortgageOption);
             if(mortgageOptionText.toLowerCase() === mortgageTypeTerm){
                 foundTerm = true;
+
                 let elem = this.getToMoreInfoAndApplyForMortgageOption(mortgageOption);
                 elem.scroll(10,10);
                 elem.click();
-                browser.pause(2000);
-                this.getToApplyMortgageOption(mortgageOption).click();
+
+                browser.pause(browser.stepTimeOut);
+
+                let applyBtn = this.getToApplyMortgageOption(mortgageOption);
+                applyBtn.scroll();
+                browser.pause(browser.stepTimeOut*2);
+                applyBtn.click();
                 break;
             }
         }
         return foundTerm;
      }
 
-     selectCheckBox(checkkBoxId, checkState){
-         browser.execute(function(chkBoxId, chkState){
-             document.getElementById(chkBoxId).checked = chkState;
-         }, checkkBoxId,checkState);
+     selectCheckBox(checkBoxId, checkState){
+        browser.execute((chkBoxId, chkState)=> {
+            document.querySelector('#' + chkBoxId).checked = chkState
+        }, checkBoxId, checkState);
      }
 }
 
