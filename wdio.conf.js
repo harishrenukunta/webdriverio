@@ -57,7 +57,7 @@ exports.config = {
     ignoreUndefinedDefinitions: false,
     strict: true,
     tagExpression: 'not @Pending',
-    timeout: 20000,
+    timeout: 30000,
     require: [
       './src/steps/home.js'
     ],
