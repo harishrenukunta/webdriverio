@@ -12,7 +12,7 @@ Feature: Find a mortgage rate
       | MortgageExists | MortgageType    | PropertyValue | MortgageAmount | Term |
       | No             | Changing lender | 300000        | 150000         | 30   |
     And choose to display only fixed mortgage and with fee
-    Then verify mortgage choices for below periods returned:
+    Then user is offered below mortgage options:
       | FixedTerm   |
       | 2 yr Fixed  |
       | 3 yr Fixed  |

@@ -12,7 +12,7 @@ Given(
             navigateTo = url;
         }
         home.open(navigateTo);
-        browser.pause(3000);
+        browser.pause(browser.stepTimeOut);
     }
     
 );
@@ -20,7 +20,7 @@ Given(
 When(/^navigate to new mortgage rates page$/, function(){
     console.log('Navigated to mortgages page');
     mortgageRatesPage = home.goto('New Mortgage Rates');
-    browser.pause(2000);
+    browser.pause(browser.stepTimeOut);
 
 });
 
@@ -34,27 +34,23 @@ When(/^find mortgage rate by providing below information:$/, function(mortgageIn
         .mortgageAmount(mortgageInfoMap[0].MortgageAmount)
         .term(mortgageInfoMap[0].Term)
         .findMortgageRate();
-
-    browser.pause(2000);
-    
+    browser.pause(browser.stepTimeOut);   
 });
 
-Then(/^verify mortgage choices for below periods returned:$/, function(expectedFixedTermOptions){
+Then(/^user is offered below mortgage options:$/, function(expectedFixedTermOptions){
     const expectedFixedTermOptionsMap = expectedFixedTermOptions.hashes();
-    let expectedFixedTermOptionsAsArr = [];
     const actualFixedTermOptions = mortgageRatesPage.getMortgageOptionsText();
     for(let expectedFixedTermOption of expectedFixedTermOptionsMap){
         expect(actualFixedTermOptions).to.be.an('array').that.includes(expectedFixedTermOption.FixedTerm);
     }    
-    browser.pause(2000);
+    browser.pause(browser.stepTimeOut);
 });
 
 When(/^choose to display only (fixed|tracker) mortgage and with (fee|no fee)$/, function(mortType, withFee){
     mortgageRatesPage
-    .showMortgageType(mortType)
-    .showMortgageWithFee(withFee);
-
-    browser.pause(2000);
+        .showMortgageType(mortType)
+        .showMortgageWithFee(withFee);
+    browser.pause(browser.stepTimeOut);
 });
 
 When(/^opt for a (\d+ yr) (fixed|tracker) mortgage$/, function(mortgageTerm, mortgageType){
